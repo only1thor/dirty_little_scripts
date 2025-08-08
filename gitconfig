@@ -1,0 +1,18 @@
+[alias]
+	bc = !git fetch -p && git branch -vv | grep \": gone]\" | awk '{print $1}' | xargs -r git branch -d
+	fixinto = "!f() { \
+		if [ $# -ne 2 ]; then \
+			echo 'fixinto: stick staged changes into a commit'; \
+			echo 'Usage: git fixinto <target-commit> <upstream>'; \
+			echo 'Example: git fixinto HEAD~3 origin/main'; \
+			exit 1; \
+		fi; \
+		target=$1; \
+		upstream=$2; \
+		if git diff --cached --quiet; then \
+			echo 'Nothing staged. Stage changes first (e.g., git add -p).'; \
+			exit 1; \
+		fi; \
+		git commit --fixup=$target && \
+		git rebase --autosquash --autostash $upstream; \
+	}; f"
